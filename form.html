@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3 required">
+                            {{ form.razao_social.label(class="form-label") }}
+                            {{ form.razao_social(class="form-control", placeholder="Razão Social do Tomador") }}
+                            {% if form.razao_social.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.razao_social.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 required">
+                            {{ form.cnpj.label(class="form-label") }}
+                            {{ form.cnpj(class="form-control", placeholder="CNPJ do Tomador (somente números)") }}
+                            {% if form.cnpj.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.cnpj.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 required">
+                            {{ form.inscricao.label(class="form-label") }}
+                            {{ form.inscricao(class="form-control", placeholder="CAE/Inscrição") }}
+                            {% if form.inscricao.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.inscricao.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 required">
+                            {{ form.usuario.label(class="form-label") }}
+                            {{ form.usuario(class="form-control", placeholder="Usuário Prefeitura") }}
+                            {% if form.usuario.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.usuario.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('listar_tomadores') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

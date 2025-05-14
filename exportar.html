@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-file-export me-2"></i>Exportar Notas Fiscais
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="exportForm" enctype="multipart/form-data" novalidate>
+                <div class="mb-3">
+                    <label for="tomador_id" class="form-label">Selecione o Tomador</label>
+                    <select name="tomador_id" id="tomador_id" class="form-select" required>
+                        <option value="">Selecione um tomador</option>
+                        {% for tomador in tomadores %}
+                        <option value="{{ tomador[0] }}">{{ tomador[1] }} (CNPJ: {{ tomador[2] }})</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor, selecione um tomador.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="limpar_apos_exportar" name="limpar_apos_exportar" value="sim">
+                        <label class="form-check-label" for="limpar_apos_exportar">
+                            Limpar tabela após exportar
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                        Cuidado! Esta opção excluirá todos os registros após a exportação.
+                    </small>
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    A exportação gerará um arquivo Excel com todas as notas fiscais cadastradas.
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                    <button type="submit" class="btn btn-primary" id="exportButton">
+                        <i class="fas fa-file-excel me-2"></i>Exportar para Excel
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('exportForm');
+    const tomadorSelect = document.getElementById('tomador_id');
+    const exportButton = document.getElementById('exportButton');
+
+    // Custom validation for tomador selection
+    form.addEventListener('submit', function(e) {
+        if (tomadorSelect.value === '') {
+            e.preventDefault();
+            tomadorSelect.classList.add('is-invalid');
+            tomadorSelect.focus();
+        } else {
+            tomadorSelect.classList.remove('is-invalid');
+        }
+    });
+
+    // Remove invalid class when a selection is made
+    tomadorSelect.addEventListener('change', function() {
+        if (this.value !== '') {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Confirm table clearing
+    const limparCheckbox = document.getElementById('limpar_apos_exportar');
+    limparCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            if (!confirm('Tem certeza que deseja limpar a tabela após a exportação? Todos os registros serão excluídos permanentemente.')) {
+                this.checked = false;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
